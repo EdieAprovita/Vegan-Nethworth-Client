@@ -24,26 +24,24 @@ const initialState = {
 //REDUCERS
 
 export function profileReducer(state = initialState, action) {
-	const { type, payload } = action
-
-	switch (type) {
+	switch (action.type) {
 		case GET_PROFILE:
 		case UPDATE_PROFILE:
 			return {
 				...state,
-				profile: payload,
+				profile: action.payload,
 				loading: false,
 			}
 		case GET_PROFILES:
 			return {
 				...state,
-				profiles: payload,
+				profiles: action.payload,
 				loading: false,
 			}
 		case PROFILE_ERROR:
 			return {
 				...state,
-				error: payload,
+				error: action.payload,
 				loading: false,
 				profile: null,
 			}
@@ -56,7 +54,7 @@ export function profileReducer(state = initialState, action) {
 		case GET_REPOS:
 			return {
 				...state,
-				repos: payload,
+				repos: action.payload,
 				loading: false,
 			}
 		case NO_REPOS:

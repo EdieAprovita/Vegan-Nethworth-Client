@@ -23,51 +23,51 @@ const initialState = {
 //REDUCERS
 
 export function postReducer(state = initialState, action) {
-	const { type, payload } = action
-
-	switch (type) {
+	switch (action.type) {
 		case GET_POSTS:
 			return {
 				...state,
-				posts: payload,
+				posts: action.payload,
 				loading: false,
 			}
 		case GET_POST:
 			return {
 				...state,
-				post: payload,
+				post: action.payload,
 				loading: false,
 			}
 		case ADD_POST:
 			return {
 				...state,
-				posts: [payload, ...state.posts],
+				posts: [action.payload, ...state.posts],
 				loading: false,
 			}
 		case DELETE_POST:
 			return {
 				...state,
-				posts: state.posts.filter(post => post._id !== payload),
+				posts: state.posts.filter(post => post._id !== action.payload),
 				loading: false,
 			}
 		case POST_ERROR:
 			return {
 				...state,
-				error: payload,
+				error: action.payload,
 				loading: false,
 			}
 		case UPDATE_LIKES:
 			return {
 				...state,
 				posts: state.posts.map(post =>
-					post._id === payload.id ? { ...post, likes: payload.likes } : post
+					post._id === action.payload.id
+						? { ...post, likes: action.payload.likes }
+						: post
 				),
 				loading: false,
 			}
 		case ADD_COMMENT:
 			return {
 				...state,
-				post: { ...state.post, comments: payload },
+				post: { ...state.post, comments: action.payload },
 				loading: false,
 			}
 		case REMOVE_COMMENT:
@@ -76,7 +76,7 @@ export function postReducer(state = initialState, action) {
 				post: {
 					...state.post,
 					comments: state.post.comments.filter(
-						comment => comment._id !== payload
+						comment => comment._id !== action.payload
 					),
 				},
 				loading: false,

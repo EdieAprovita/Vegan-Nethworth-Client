@@ -21,21 +21,19 @@ const initialState = {
 }
 
 export function authReducer(state = initialState, action) {
-	const { type, payload } = action
-
-	switch (type) {
+	switch (action.type) {
 		case USER_LOADED:
 			return {
 				...state,
 				isAuthenticated: true,
 				loading: false,
-				user: payload,
+				user: action.payload,
 			}
 		case REGISTER_SUCCESS:
 		case LOGIN_SUCCESS:
 			return {
 				...state,
-				...payload,
+				...action.payload,
 				isAuthenticated: true,
 				loading: false,
 			}
