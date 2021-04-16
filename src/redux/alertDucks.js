@@ -1,9 +1,5 @@
 import { v4 as uuidv4 } from 'uuid'
-
-//TYPES
-
-export const SET_ALERT = 'SET_ALERT'
-export const REMOVE_ALERT = 'REMOVE_ALERT'
+import { SET_ALERT, REMOVE_ALERT } from './types'
 
 //CONSTANTS
 

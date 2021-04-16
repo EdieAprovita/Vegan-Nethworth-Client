@@ -1,123 +1,131 @@
-import axios from "axios"
-
-//TYPES
-
-export const USER_LOGIN_REQUEST = 'USER_LOGIN_REQUEST'
-export const USER_LOGIN_SUCCESS = 'USER_LOGIN_SUCCESS'
-export const USER_LOGIN_FAIL = 'USER_LOGIN_FAIL'
-export const USER_LOGOUT = 'USER_LOGOUT'
-
-export const USER_REGISTER_REQUEST = 'USER_REGISTER_REQUEST'
-export const USER_REGISTER_SUCCESS = 'USER_REGISTER_SUCCESS'
-export const USER_REGISTER_FAIL = 'USER_REGISTER_FAIL'
-
-
+import api from '../utils/api'
+import { setAlert } from './alertDucks'
+import {
+	REGISTER_SUCCESS,
+	REGISTER_FAIL,
+	LOGIN_FAIL,
+	USER_LOADED,
+	AUTH_ERROR,
+	LOGIN_SUCCESS,
+	LOGOUT,
+	ACCOUNT_DELETED,
+} from './types'
 
 //REDUCERS
 
-export const userLoginReducer = (state = {}, action) => {
-	switch (action.type) {
-		case USER_LOGIN_REQUEST:
-			return { loading: true }
-		case USER_LOGIN_SUCCESS:
-			return { loading: false, userInfo: action.payload }
-		case USER_LOGIN_FAIL:
-			return { loading: false, error: action.payload }
-		case USER_LOGOUT:
-			return {}
+const initialState = {
+	token: localStorage.getItem('token'),
+	isAuthenticated: null,
+	loading: true,
+	user: null,
+}
+
+export function authReducer(state = initialState, action) {
+	const { type, payload } = action
+
+	switch (type) {
+		case USER_LOADED:
+			return {
+				...state,
+				isAuthenticated: true,
+				loading: false,
+				user: payload,
+			}
+		case REGISTER_SUCCESS:
+		case LOGIN_SUCCESS:
+			return {
+				...state,
+				...payload,
+				isAuthenticated: true,
+				loading: false,
+			}
+		case ACCOUNT_DELETED:
+			return {
+				...state,
+				token: null,
+				isAuthenticated: false,
+				loading: false,
+				user: null,
+			}
+		case AUTH_ERROR:
+		case LOGOUT:
+			return {
+				...state,
+				token: null,
+				isAuthenticated: false,
+				loading: false,
+				user: null,
+			}
 		default:
 			return state
 	}
 }
-
-export const userRegisterReducer = (state = {}, action) => {
-	switch (action.type) {
-		case USER_REGISTER_REQUEST:
-			return { loading: true }
-		case USER_REGISTER_SUCCESS:
-			return { loading: false, userInfo: action.payload }
-		case USER_REGISTER_FAIL:
-			return { loading: false, error: action.payload }
-		case USER_LOGOUT:
-			return {}
-		default:
-			return state
-	}
-}
-
 
 //ACTIONS
 
+export const loadUser = () => async dispatch => {
+	try {
+		const res = await api.get('/auth')
+
+		dispatch({
+			type: USER_LOADED,
+			payload: res.data,
+		})
+	} catch (err) {
+		dispatch({
+			type: AUTH_ERROR,
+		})
+	}
+}
+
+// Register User
+export const register = formData => async dispatch => {
+	try {
+		const res = await api.post('/users', formData)
+
+		dispatch({
+			type: REGISTER_SUCCESS,
+			payload: res.data,
+		})
+		dispatch(loadUser())
+	} catch (err) {
+		const errors = err.response.data.errors
+
+		if (errors) {
+			errors.forEach(error => dispatch(setAlert(error.msg, 'danger')))
+		}
+
+		dispatch({
+			type: REGISTER_FAIL,
+		})
+	}
+}
+
+// Login User
 export const login = (email, password) => async dispatch => {
+	const body = { email, password }
+
 	try {
+		const res = await api.post('/auth', body)
+
 		dispatch({
-			type: USER_LOGIN_REQUEST,
+			type: LOGIN_SUCCESS,
+			payload: res.data,
 		})
 
-		const config = {
-			headers: {
-				'Content-Type': 'application/json',
-			},
+		dispatch(loadUser())
+	} catch (err) {
+		const errors = err.response.data.errors
+
+		if (errors) {
+			errors.forEach(error => dispatch(setAlert(error.msg, 'danger')))
 		}
 
-		const { data } = await axios.post('/api/users/login', { email, password }, config)
-
 		dispatch({
-			type: USER_LOGIN_SUCCESS,
-			payload: data,
-		})
-
-		localStorage.setItem('userInfo', JSON.stringify(data))
-	} catch (error) {
-		dispatch({
-			type: USER_LOGIN_FAIL,
-			payload:
-				error.response && error.response.data.message
-					? error.response.data.message
-					: error.message,
+			type: LOGIN_FAIL,
 		})
 	}
 }
 
-export const logout = () => dispatch => {
-	localStorage.removeItem('userInfo')
-	dispatch({ type: USER_LOGOUT })
-	document.location.href = '/login'
-}
-
-export const register = (name, email, password) => async dispatch => {
-	try {
-		dispatch({
-			type: USER_REGISTER_REQUEST,
-		})
-
-		const config = {
-			headers: {
-				'Content-Type': 'application/json',
-			},
-		}
-
-		const { data } = await axios.post('/api/users', { name, email, password }, config)
-
-		dispatch({
-			type: USER_REGISTER_SUCCESS,
-			payload: data,
-		})
-
-		dispatch({
-			type: USER_LOGIN_SUCCESS,
-			payload: data,
-		})
-
-		localStorage.setItem('userInfo', JSON.stringify(data))
-	} catch (error) {
-		dispatch({
-			type: USER_REGISTER_FAIL,
-			payload:
-				error.response && error.response.data.message
-					? error.response.data.message
-					: error.message,
-		})
-	}
-}
-
+// Logout
+export const logout = () => ({ type: LOGOUT })
