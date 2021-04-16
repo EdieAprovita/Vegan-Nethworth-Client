@@ -17,7 +17,7 @@ const Register = () => {
 
 	const { name, email, password, password2 } = formData
 
-	const userLogin = useSelector(state => state.userLogin)
+	const userLogin = useSelector(state => state.auth)
 	const { isAuthenticated } = userLogin
 
 	const onChange = e => setFormData({ ...formData, [e.target.name]: e.target.value })

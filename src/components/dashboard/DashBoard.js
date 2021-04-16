@@ -7,11 +7,12 @@ import Experience from './Experience'
 import Education from './Education'
 import { getCurrentProfile, deleteAccount } from '../../redux/profileDucks'
 
-const DashBoard = ({ auth: { user } }) => {
+const DashBoard = () => {
 	const dispatch = useDispatch()
 
-	const userProfile = useSelector(state => state.userProfile)
-	const { profile } = userProfile
+	const auth = useSelector(state => state.auth)
+	const { user } = auth
+	const profile = useSelector(state => state.profile)
 
 	useEffect(() => {
 		dispatch(getCurrentProfile())

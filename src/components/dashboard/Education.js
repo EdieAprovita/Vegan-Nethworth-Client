@@ -1,11 +1,13 @@
 import React, { Fragment } from 'react'
 import PropTypes from 'prop-types'
-import { useDispatch } from 'react-redux'
+import { useDispatch, useSelector } from 'react-redux'
 import { deleteEducation } from '../../redux/profileDucks'
 import formatDate from '../../utils/formatDate'
 
-const Education = ({ education }) => {
+const Education = () => {
 	const dispatch = useDispatch()
+
+	const education = useSelector(state => state.profile.education)
 	const educations = education.map(edu => (
 		<tr key={edu._id}>
 			<td>{edu.school}</td>

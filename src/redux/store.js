@@ -8,10 +8,10 @@ import { alertReducer } from './alertDucks'
 import setAuthToken from '../utils/setAuthoken'
 
 const rootReducer = combineReducers({
-	userLogin: authReducer,
-	userPost: postReducer,
-	userProfile: profileReducer,
-	profileAlert: alertReducer,
+	alert: alertReducer,
+	auth: authReducer,
+	profile: profileReducer,
+	post: postReducer,
 })
 
 const initialState = {}

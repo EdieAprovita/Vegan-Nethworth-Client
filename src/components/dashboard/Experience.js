@@ -1,11 +1,12 @@
 import React, { Fragment } from 'react'
 import PropTypes from 'prop-types'
-import { useDispatch } from 'react-redux'
+import { useDispatch, useSelector } from 'react-redux'
 import { deleteExperience } from '../../redux/profileDucks'
 import formatDate from '../../utils/formatDate'
 
-const Experience = ({ experience }) => {
+const Experience = () => {
 	const dispatch = useDispatch()
+	const experience = useSelector(state => state.profile.experience)
 
 	const experiences = experience.map(exp => (
 		<tr key={exp._id}>
