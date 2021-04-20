@@ -1,51 +1,47 @@
-import React, { Fragment } from 'react'
-import PropTypes from 'prop-types'
-import { useDispatch, useSelector } from 'react-redux'
-import { deleteEducation } from '../../redux/profileDucks'
-import formatDate from '../../utils/formatDate'
+import React, { Fragment } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
+import { deleteEducation } from '../../actions/profile';
+import formatDate from '../../utils/formatDate';
 
 const Education = () => {
-	const dispatch = useDispatch()
+  const dispatch = useDispatch();
 
-	const education = useSelector(state => state.profile.education)
-	const educations = education.map(edu => (
-		<tr key={edu._id}>
-			<td>{edu.school}</td>
-			<td className='hide-sm'>{edu.degree}</td>
-			<td>
-				{formatDate(edu.from)} - {edu.to ? formatDate(edu.to) : 'Now'}
-			</td>
-			<td>
-				<button
-					onClick={() => dispatch(deleteEducation(edu._id))}
-					className='btn btn-danger'>
-					Delete
-				</button>
-			</td>
-		</tr>
-	))
+  const profile = useSelector((state) => state.profile);
+  const { education } = profile;
+  const educations = education.map((edu) => (
+    <tr key={edu._id}>
+      <td>{edu.school}</td>
+      <td className="hide-sm">{edu.degree}</td>
+      <td>
+        {formatDate(edu.from)} - {edu.to ? formatDate(edu.to) : 'Now'}
+      </td>
+      <td>
+        <button
+          onClick={() => dispatch(deleteEducation(edu._id))}
+          className="btn btn-danger"
+        >
+          Delete
+        </button>
+      </td>
+    </tr>
+  ));
 
-	return (
-		<Fragment>
-			<h2 className='my-2'>Education Credentials</h2>
-			<table className='table'>
-				<thead>
-					<tr>
-						<th>School</th>
-						<th className='hide-sm'>Degree</th>
-						<th className='hide-sm'>Years</th>
-						<th />
-					</tr>
-				</thead>
-				<tbody>{educations}</tbody>
-			</table>
-		</Fragment>
-	)
-}
+  return (
+    <Fragment>
+      <h2 className="my-2">Education Credentials</h2>
+      <table className="table">
+        <thead>
+          <tr>
+            <th>School</th>
+            <th className="hide-sm">Degree</th>
+            <th className="hide-sm">Years</th>
+            <th />
+          </tr>
+        </thead>
+        <tbody>{educations}</tbody>
+      </table>
+    </Fragment>
+  );
+};
 
-Education.propTypes = {
-	education: PropTypes.array.isRequired,
-	deleteEducation: PropTypes.func.isRequired,
-}
-
-export default Education
+export default Education;
